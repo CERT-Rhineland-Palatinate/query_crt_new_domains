@@ -3,7 +3,7 @@
 
 logfile = "/var/tmp/crt.sh.log"
 
-known_domains_db="/var/tmp"
+known_domains_db_path="/var/tmp"
 
 # Parameters for database
 
