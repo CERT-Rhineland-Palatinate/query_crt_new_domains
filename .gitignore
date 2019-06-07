@@ -1,0 +1,9 @@
+bin/
+include/
+lib/
+share/
+__pycache__/
+lib64
+pyvenv.cfg
+known_domains.txt
+config.py
