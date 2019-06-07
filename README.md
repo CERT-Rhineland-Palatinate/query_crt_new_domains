@@ -20,7 +20,7 @@ As certificates are requested while setting up new services, we will know about 
 Linux:
 
 ```sh
-git clone https://wotschel@bitbucket.org/certrlp/crtsh-scanner.git
+git clone https://github.com/CERT-Rhineland-Palatinate/query_crt_new_domains.git
 cd crtsh-scanner
 python3 -m venv .
 source bin/activate
