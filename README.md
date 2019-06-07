@@ -21,7 +21,7 @@ Linux:
 
 ```sh
 git clone https://github.com/CERT-Rhineland-Palatinate/query_crt_new_domains.git
-cd crtsh-scanner
+cd query_crt_new_domains
 python3 -m venv .
 source bin/activate
 pip install -r requirements.txt
