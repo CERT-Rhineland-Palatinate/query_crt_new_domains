@@ -103,7 +103,8 @@ Subject: {m_subject}
         smtpObj = smtplib.SMTP(m_host)
         smtpObj.sendmail(m_sender, m_to, message)
         log("Successfully sent email")
-    except SMTPException:
+    except SMTPException as e:
+        print(e)
         log("Error: unable to send email")
 
 if __name__ == "__main__":
@@ -158,6 +159,7 @@ if __name__ == "__main__":
 
     # Sending mail if requested
     if mail is False:
+        print("No Mail")
         exit(0)
 
     from config import m_host, m_sender, m_to, m_subject

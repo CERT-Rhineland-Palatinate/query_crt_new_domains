@@ -8,4 +8,4 @@ dir_path=$(dirname $script_path)
 cd $dir_path
 source bin/activate
 
-./main.py -v -t rlp.de
+./main.py -v -m -t rlp.de
