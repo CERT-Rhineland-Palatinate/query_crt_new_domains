@@ -5,13 +5,6 @@ logfile = "/var/tmp/crt.sh.log"
 
 known_domains_db_path="/var/tmp"
 
-# Parameters for database
-
-db_user="guest"
-db_host="crt.sh"
-db_port=5432
-db_db="certwatch"
-
 # Parameters for sending mail
 
 m_host = "localhost"
