@@ -5,7 +5,8 @@ import smtplib
 import socket
 import argparse
 
-from psycopg2 import pool
+import requests
+import feedparser
 
 try:
     from config import logfile, known_domains_db_path
@@ -16,58 +17,16 @@ except ModuleNotFoundError:
     print("(and adjust the settings)")
     exit(-1)
 
-
-def fetch_crt(tld):
-    log(f"Querying database {db_db} on {db_host}:{db_port}")
-
-    try:
-        hbn = socket.gethostbyname(db_host)
-    except Exception as e:
-        print(f"Error:Can't resolve {db_host}")
-        print(e)
-        exit(-1)
-
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(3)
-            s.connect((db_host, db_port))
-    except Exception as e:
-        print(f"Error:Can't connect to {db_host}:{db_port}")
-        print(e)
-        exit(-1)
-
-    sql = f"""
-        SELECT DISTINCT(ci.NAME_VALUE)
-        FROM certificate_identity ci
-        WHERE reverse(lower(ci.NAME_VALUE)) LIKE reverse(lower('{tld}'))
-    """
-
-    try:
-        ppool = pool.SimpleConnectionPool(1, 20, user=db_user,
-                                          host=db_host,
-                                          port=db_port,
-                                          database=db_db)
-    except Exception as e:
-        msg = "Error: Unable to connect to database server"
-        print(e)
-        log(msg)
-        exit(-1)
-
-    ps_connection = ppool.getconn()
-    ps_connection.set_session(readonly=True, autocommit=True)
-    ps_cursor = ps_connection.cursor()
-    ps_cursor.execute(sql)
-    records = ps_cursor.fetchall()
-    log(f"Found {len(records)} records in db")
-
-    tmp = []
-    for record in records:
-        tmp.append(record[0])
-    records = tmp
-    records.sort()
-
-    return records
-
+def fetch_atom(tld):
+    url = f"https://crt.sh/atom?identity={tld}"
+    log(f"Fetching {url}")
+    result = requests.get(url)
+    log(f"Return Code: {result.status_code}")
+    if result.status_code == 200:
+        return(result)
+    else:
+        log(f"Error - Exit")
+        exit(0)
 
 def log(msg):
     now = int(time.time())
@@ -135,9 +94,24 @@ if __name__ == "__main__":
 
     log(f"Start for {tld}")
 
+    records = []
     new_domains = []
     known_domains = read_known_domains()
-    records = fetch_crt(tld_wc)
+    
+    page = fetch_atom(tld_wc)
+    domains = feedparser.parse(page.text)
+    for d in domains['entries']:
+        value = d['summary_detail']['value']
+        value = value.split("<br>")
+        value = value[0]
+        value = value.split("\n")
+        print(value)
+        for v in value:
+            records.append(v)
+
+    records = list(set(records))
+    records.sort()
+
     log(f"Found {len(records)} on crt.sh")
 
     for record in records:
