@@ -10,7 +10,6 @@ import feedparser
 
 try:
     from config import logfile, known_domains_db_path
-    from config import db_host, db_port, db_user, db_db
 except ModuleNotFoundError:
     print("Error - config.py not found")
     print("Please cp config_template.py to config.py")
@@ -105,7 +104,6 @@ if __name__ == "__main__":
         value = value.split("<br>")
         value = value[0]
         value = value.split("\n")
-        print(value)
         for v in value:
             records.append(v)
 
@@ -133,7 +131,7 @@ if __name__ == "__main__":
 
     # Sending mail if requested
     if mail is False:
-        print("No Mail")
+        log("No Mail")
         exit(0)
 
     from config import m_host, m_sender, m_to, m_subject
